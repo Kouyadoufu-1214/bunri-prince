@@ -2,9 +2,9 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const S = require('./story.js');
 
-for (const courseId of Object.keys(S.courses)) {
+for (const courseId of [...Object.keys(S.courses), 'adult']) {
 test(`${courseId}: all 729 combinations finish, learn all lessons, and separate romance from quiz score`, () => {
-  const definitionsBefore = JSON.stringify(S.courses);
+  const definitionsBefore = JSON.stringify([S.courses, S.adult]);
   const reached = new Set();
   for (let socialCode = 0; socialCode < 27; socialCode++) {
     const expected = new Set();
@@ -28,6 +28,7 @@ test(`${courseId}: all 729 combinations finish, learn all lessons, and separate 
       assert.equal(state.choices.length, 3);
       assert.deepEqual(state.learned, S.course(state).lessons.map(l => l.id));
       assert.equal(state.courseId, courseId);
+      assert.equal(state.mode, courseId === 'adult' ? 'adult' : 'minor');
       assert.ok(S.endingContent(state).text.length > 0);
       assert.equal(S.advance(state), false);
       assert.equal(state.chapter, 4);
@@ -36,7 +37,7 @@ test(`${courseId}: all 729 combinations finish, learn all lessons, and separate 
     assert.equal(expected.size, 1, 'quiz performance cannot change the relationship ending');
   }
   assert.deepEqual([...reached].sort(), ['buddy', 'promise', 'sweet']);
-  assert.equal(JSON.stringify(S.courses), definitionsBefore, 'playing must not mutate any course definition');
+  assert.equal(JSON.stringify([S.courses, S.adult]), definitionsBefore, 'playing must not mutate any course definition');
 });
 
 test(`${courseId}: all correct and all incorrect answers produce accurate scores`, () => {
@@ -102,4 +103,33 @@ test('elementary story, quizzes, and endings do not inherit advanced vocabulary'
 
 test('unknown courses are rejected instead of silently selecting the wrong material', () => {
   for (const invalid of ['missing', 'toString', '__proto__', null]) assert.throws(() => S.createState(invalid), RangeError);
+});
+
+test('teacher story is separate and every visitor starts without the previous mode or records', () => {
+  const adult = S.createState('adult');
+  assert.match(S.scene(adult).text, /22歳/);
+  assert.match(S.scene(adult).text, /先生/);
+  assert.notEqual(S.adult.scenes, S.scenes);
+  assert.equal(S.adult.course.chapters.length, 5);
+  assert.equal(new Set(S.adult.scenes.map(s => s.id)).size, S.adult.scenes.length);
+  for (const lesson of S.adult.course.lessons) {
+    assert.notEqual(lesson, S.courses.senior.lessons.find(l => l.id === lesson.id));
+    assert.ok(lesson.quiz.options[lesson.quiz.correct]);
+  }
+  for (const courseId of ['elementary', 'junior', 'senior', 'adult']) {
+    adult.history.push({ text: 'previous visitor' }); adult.affection = 6; adult.learned.push('binary');
+    const fresh = S.createState(courseId);
+    assert.deepEqual(fresh.history, []); assert.deepEqual(fresh.answers, []); assert.deepEqual(fresh.learned, []);
+    assert.deepEqual(fresh.choices, []); assert.equal(fresh.feedback, null); assert.equal(fresh.affection, 0);
+    if (courseId !== 'adult') {
+      assert.equal(fresh.mode, 'minor');
+      assert.notEqual(S.scene(fresh).text, S.scene(adult).text);
+      for (const affection of [0, 2, 6]) {
+        fresh.affection = affection; adult.affection = affection;
+        assert.notEqual(S.endingContent(fresh).title, S.endingContent(adult).title);
+      }
+    }
+  }
+  const reset = S.createState();
+  assert.equal(reset.mode, 'minor');
 });

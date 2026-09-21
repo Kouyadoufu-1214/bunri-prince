@@ -1,6 +1,7 @@
 (function (root) {
   'use strict';
   const courses = typeof module !== 'undefined' && module.exports ? require('./courses.js') : root.BunriCourses;
+  const adult = typeof module !== 'undefined' && module.exports ? require('./adult-story.js') : root.BunriAdultStory;
   const scenes = [
     { id: 'intro', chapter: 0, speaker: 'あなた', text: '名古屋文理大学、午後の講義。窓から差し込む光が、机に四角い模様を作っている。空いている席を探していると、窓際の学生がこちらを見た。' },
     { id: 'meet', speaker: '御家雄一', text: '「ここ、空いてるよ。今日、ペアで課題をやるんだって。……よかったら、俺と組まない？」' },
@@ -49,12 +50,12 @@
     buddy: { number: '03', label: 'BEST BUDDY END', title: '最高の相棒、発見。', quote: '「君と組むと、なんでも楽しくなるね」', text: '向かう先は、もちろん焼きそばの屋台。効率のいいルートを考える雄一と、ソースの香りを頼りに進むあなた。方法は違っても、目指す先は同じだ。「次の課題も、このチームで」王子様は笑って、拳を軽く合わせてきた。', after: '二人なら、難問だってきっと解ける。' }
   };
   function createState(courseId = 'junior') {
-    if (!Object.prototype.hasOwnProperty.call(courses, courseId)) throw new RangeError('Unknown course: ' + courseId);
-    return { courseId, index: 0, chapter: 0, affection: 0, answers: [], choices: [], learned: [], history: [], feedback: null };
+    if (courseId !== 'adult' && !Object.prototype.hasOwnProperty.call(courses, courseId)) throw new RangeError('Unknown course: ' + courseId);
+    return { courseId, mode: courseId === 'adult' ? 'adult' : 'minor', index: 0, chapter: 0, affection: 0, answers: [], choices: [], learned: [], history: [], feedback: null };
   }
-  function course(state) { return courses[state.courseId]; }
+  function course(state) { return state.mode === 'adult' ? adult.course : courses[state.courseId]; }
   function scene(state) {
-    const base = scenes[state.index];
+    const base = (state.mode === 'adult' ? adult.scenes : scenes)[state.index];
     const selected = course(state);
     if (base.lessonPart) {
       const lesson = selected.lessons.find(item => item.id === base.lesson);
@@ -80,8 +81,8 @@
     return true;
   }
   function ending(state) { return state.affection >= 4 ? 'sweet' : state.affection >= 2 ? 'promise' : 'buddy'; }
-  function endingContent(state) { const key = ending(state); return { ...endings[key], ...course(state).endings?.[key] }; }
-  const api = { courses, course, scenes, createState, scene, advance, answer, ending, endingContent };
+  function endingContent(state) { const key = ending(state); return state.mode === 'adult' ? { ...adult.endings[key] } : { ...endings[key], ...course(state).endings?.[key] }; }
+  const api = { courses, adult, course, scenes, createState, scene, advance, answer, ending, endingContent };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.BunriStory = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);
