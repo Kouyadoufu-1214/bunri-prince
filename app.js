@@ -28,7 +28,21 @@
   let audioContext;
   let audioLoop;
   let audioMaster;
+  const activeTones = new Set();
   let noteIndex = 0;
+  let audioRevision = 0;
+  let endingTrack = null;
+  let musicPlaying = false;
+  let musicError = false;
+  const endingAudio = document.createElement('audio');
+  endingAudio.id = 'ending-audio';
+  document.body.appendChild(endingAudio);
+  const endingPlayer = window.BunriMusic.createPlayer(endingAudio, status => {
+    musicPlaying = status.playing;
+    updateEndingMusic();
+  }, () => {
+    musicError = true; sound = false; syncAudio(); updateSoundButton();
+  });
   let lastModalFocus;
   let recordedKey = null;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -46,6 +60,7 @@
       <div class="title-links"><button class="text-button" data-action="how">${icon('info')}あそびかた</button><button class="text-button" data-action="notebook">${icon('book')}講義ノート</button></div></div>
       <div class="title-bottom"><div class="facts"><div class="fact"><strong>5</strong><div><span>MINUTES</span><small>ひと休みの物語</small></div></div><div class="fact"><strong>3</strong><div><span>LESSONS</span><small>小さな学び</small></div></div><div class="fact"><strong>3</strong><div><span>ENDINGS / MODE</span><small>各物語に3つの結末</small></div></div></div><div class="character-note"><small>二つの物語で出会うのは</small><p>御家雄一<span>THE PRINCE</span></p></div></div></section>`;
     document.getElementById('start-game').addEventListener('click', () => chooseMode());
+    endingTrack = null; musicError = false; syncAudio();
     bindCommon();
   }
   function chooseMode(preview = false) {
@@ -155,9 +170,12 @@
   function renderEnding() {
     clearTimers(); auto = false; screen = 'ending';
     const end = S.endingContent(state);
+    endingTrack = window.BunriMusic.tracks[state.mode][S.ending(state)];
     if (recordedKey !== 'ending') { addHistory('エピローグ', end.quote + end.text); recordedKey = 'ending'; }
-    app.innerHTML = `<section class="stage ending-stage${courseClass()}" aria-labelledby="ending-title">${art}${sparkles}<div class="ending-content"><div class="ending-badge">ENDING ${end.number} / ${end.label}</div><h1 id="ending-title">${end.title}</h1><p class="ending-quote">${end.quote}</p><p class="ending-prose">${end.text}</p><p class="ending-after">${end.after}</p><div class="result-card"><p class="result-course">${S.course(state).label} / ${copy('修了', 'おわり！')}</p><div class="result-head"><span>${copy('今日、持ち帰る小さな学び', '今日、わかったこと')}</span><strong>${state.answers.filter(a => a.correct).length}<small> / 3 ${copy('正解', 'せいかい')}</small></strong></div><div class="result-lessons">${S.course(state).lessons.map(lesson => `<span class="lesson-chip">✓ ${lesson.title}</span>`).join('')}</div></div><div class="ending-actions"><button class="primary-button" data-action="notebook">${icon('book')}${copy('学びを振り返る', 'ノートをみる')}</button><button class="secondary-button" id="finish-game">タイトルへ戻る →</button></div><p class="ending-bottom-note">${copy('遊んでくれて、ありがとう。別の選択で、別の未来にも出会えます。', 'あそんでくれて、ありがとう。ほかのコースも、ためしてみてね。')}<br>次の方は「タイトルへ戻る」から、モードを選び直せます。</p></div></section>`;
+    app.innerHTML = `<section class="stage ending-stage${courseClass()}" aria-labelledby="ending-title">${art}${sparkles}<div class="ending-content"><div class="ending-badge">ENDING ${end.number} / ${end.label}</div><h1 id="ending-title">${end.title}</h1><p class="ending-quote">${end.quote}</p><p class="ending-prose">${end.text}</p><p class="ending-after">${end.after}</p><div class="ending-music"><div><span>ENDING MUSIC</span><strong>${escape(endingTrack.title)}</strong><small id="music-status" aria-live="polite"></small></div><button class="secondary-button" id="ending-music-toggle" aria-pressed="false">音楽を再生</button></div><div class="result-card"><p class="result-course">${S.course(state).label} / ${copy('修了', 'おわり！')}</p><div class="result-head"><span>${copy('今日、持ち帰る小さな学び', '今日、わかったこと')}</span><strong>${state.answers.filter(a => a.correct).length}<small> / 3 ${copy('正解', 'せいかい')}</small></strong></div><div class="result-lessons">${S.course(state).lessons.map(lesson => `<span class="lesson-chip">✓ ${lesson.title}</span>`).join('')}</div></div><div class="ending-actions"><button class="primary-button" data-action="notebook">${icon('book')}${copy('学びを振り返る', 'ノートをみる')}</button><button class="secondary-button" id="finish-game">タイトルへ戻る →</button></div><p class="ending-bottom-note">${copy('遊んでくれて、ありがとう。別の選択で、別の未来にも出会えます。', 'あそんでくれて、ありがとう。ほかのコースも、ためしてみてね。')}<br>次の方は「タイトルへ戻る」から、モードを選び直せます。</p></div></section>`;
     document.getElementById('finish-game').addEventListener('click', () => { title(); document.getElementById('start-game').focus({ preventScroll: true }); }); bindCommon();
+    document.getElementById('ending-music-toggle').addEventListener('click', toggleSound);
+    musicError = false; syncAudio(); updateEndingMusic();
     app.focus({ preventScroll: true });
   }
   function openModal(kicker, heading, body) {
@@ -179,7 +197,7 @@
     document.getElementById('back-to-courses')?.addEventListener('click', () => selected.id === 'adult' ? chooseMode(true) : chooseCourse(true));
     document.getElementById('close-modal').focus({ preventScroll: true });
   }
-  function how() { openModal('HOW TO PLAY', '5分だけ、物語の中へ。', '<ol class="how-list"><li>「物語をはじめる」で未成年向け・成年向けを選びます。未成年向けは同級生との物語で、小・中・高の3コース。成年向けは18歳以上の方に向けた、大学生と教員の恋の物語です。クリック、Enter、Spaceで会話が進みます。文字の表示中に押すと、全文を表示します。</li><li>会話の選択肢で、雄一との距離が変わります。選択肢はクリック、または数字の1・2・3で選べます。</li><li>講義には三つのミニ問題。ヒントを見ても、間違えても大丈夫。必ず解説が出て、物語の最後まで遊べます。</li><li>それぞれの物語に結末は三種類。クイズの点数ではなく、会話の選択で決まります。最後はタイトルに戻して、次の方へ。</li></ol><p class="modal-note">所要時間の目安は約4〜6分。AUTOは会話だけを自動で進め、問題と選択肢では止まります。音は最初はオフ。スピーカーボタンで、小さなオリジナルBGMを流せます。</p>'); }
+  function how() { openModal('HOW TO PLAY', '5分だけ、物語の中へ。', '<ol class="how-list"><li>「物語をはじめる」で未成年向け・成年向けを選びます。未成年向けは同級生との物語で、小・中・高の3コース。成年向けは18歳以上の方に向けた、大学生と教員の恋の物語です。クリック、Enter、Spaceで会話が進みます。文字の表示中に押すと、全文を表示します。</li><li>会話の選択肢で、雄一との距離が変わります。選択肢はクリック、または数字の1・2・3で選べます。</li><li>講義には三つのミニ問題。ヒントを見ても、間違えても大丈夫。必ず解説が出て、物語の最後まで遊べます。</li><li>それぞれの物語に結末は三種類。クイズの点数ではなく、会話の選択で決まります。最後はタイトルに戻して、次の方へ。</li></ol><p class="modal-note">所要時間の目安は約4〜6分。AUTOは会話だけを自動で進め、問題と選択肢では止まります。音は最初はオフ。スピーカーボタンで音楽を流せます。結末では、そのエンディング専用の曲に切り替わります。結末の「音楽を再生」から聴くこともできます。</p>'); }
   function history() { openModal('STORY LOG', 'ここまでの会話', state.history.map(item => `<div class="history-item"><strong>${escape(item.speaker)}</strong><p>${escape(item.text)}</p></div>`).join('') || '<p>まだ会話はありません。</p>'); document.getElementById('modal-body').lastElementChild?.scrollIntoView({ block: 'nearest' }); }
   function goHome() {
     if (screen === 'title') return;
@@ -195,22 +213,50 @@
     oscillator.type = 'sine'; oscillator.frequency.value = frequency;
     gain.gain.setValueAtTime(0, start); gain.gain.linearRampToValueAtTime(volume, start + .025); gain.gain.exponentialRampToValueAtTime(.0001, start + duration);
     oscillator.connect(gain); gain.connect(audioMaster); oscillator.start(start); oscillator.stop(start + duration + .1);
-    oscillator.onended = () => { oscillator.disconnect(); gain.disconnect(); };
+    activeTones.add(oscillator);
+    oscillator.onended = () => { activeTones.delete(oscillator); oscillator.disconnect(); gain.disconnect(); };
   }
   function chime() { tone(659.25, .2, .025); }
   function updateSoundButton() { const button = document.getElementById('sound-toggle'); button.innerHTML = icon(sound ? 'sound' : 'mute'); button.setAttribute('aria-label', sound ? '音をオフにする' : '音をオンにする'); button.setAttribute('aria-pressed', String(sound)); }
-  async function toggleSound() {
+  function updateEndingMusic() {
+    const button = document.getElementById('ending-music-toggle');
+    if (!button) return;
+    button.textContent = sound ? '音楽を止める' : '音楽を再生';
+    button.setAttribute('aria-pressed', String(sound));
+    document.getElementById('music-status').textContent = musicError ? '再生できませんでした。もう一度お試しください。' : musicPlaying ? 'この結末だけのオリジナル曲を再生中' : sound ? '曲を読み込んでいます…' : 'この結末だけのオリジナル曲';
+  }
+  function syncAudio() {
+    const ticket = ++audioRevision;
+    clearInterval(audioLoop); audioLoop = null;
+    for (const oscillator of activeTones) { try { oscillator.stop(); } catch {} }
+    activeTones.clear();
+    endingPlayer.set(endingTrack, sound, !document.hidden);
+    updateEndingMusic();
+    if (!sound || endingTrack || document.hidden) {
+      if (audioContext) audioContext.suspend().catch(() => {});
+      return;
+    }
     try {
-      if (!audioContext) { const Context = window.AudioContext || window.webkitAudioContext; audioContext = new Context(); audioMaster = audioContext.createGain(); audioMaster.gain.value = .3; audioMaster.connect(audioContext.destination); }
-      sound = !sound; clearInterval(audioLoop);
-      if (sound) {
-        await audioContext.resume();
+      if (!audioContext) {
+        const Context = window.AudioContext || window.webkitAudioContext;
+        audioContext = new Context(); audioMaster = audioContext.createGain();
+        audioMaster.gain.value = .3; audioMaster.connect(audioContext.destination);
+      }
+      audioContext.resume().then(() => {
+        if (ticket !== audioRevision || !sound || endingTrack || document.hidden) return;
         const notes = [261.63, 329.63, 392, 523.25, 440, 392, 329.63, 293.66, 261.63, 349.23, 440, 523.25, 493.88, 392, 293.66, 329.63];
         const playNote = () => { if (document.hidden) return; tone(notes[noteIndex % notes.length], 2.2, .09); if (noteIndex % 4 === 0) tone(notes[noteIndex % notes.length] / 2, 3.3, .075); noteIndex++; };
         playNote(); audioLoop = setInterval(playNote, 740);
-      } else await audioContext.suspend();
-    } catch { sound = false; clearInterval(audioLoop); openModal('SOUND', '音声を再生できませんでした', '<p>このブラウザでは音声が利用できません。物語はそのまま遊べます。</p>'); }
-    updateSoundButton();
+      }).catch(() => { if (ticket === audioRevision) audioFailed(); });
+    } catch { audioFailed(); }
+  }
+  function audioFailed() {
+    sound = false; clearInterval(audioLoop); updateSoundButton();
+    openModal('SOUND', '音声を再生できませんでした', '<p>音声を再生するには、スピーカーボタンからもう一度お試しください。物語はそのまま遊べます。</p>');
+  }
+  function toggleSound() {
+    sound = !sound; musicError = false;
+    syncAudio(); updateSoundButton();
   }
   document.getElementById('close-modal').addEventListener('click', () => modal.close());
   modal.addEventListener('close', () => { if (lastModalFocus?.isConnected) lastModalFocus.focus({ preventScroll: true }); scheduleAuto(); });
@@ -221,7 +267,7 @@
   if (!document.fullscreenEnabled) document.getElementById('fullscreen-toggle').hidden = true;
   document.getElementById('fullscreen-toggle').addEventListener('click', async () => { try { if (!document.fullscreenElement) await document.documentElement.requestFullscreen(); else await document.exitFullscreen(); } catch { openModal('DISPLAY', '全画面に切り替えられませんでした', '<p>ブラウザのメニューから全画面表示を選ぶか、このまま遊んでください。</p>'); } });
   document.addEventListener('fullscreenchange', () => document.getElementById('fullscreen-toggle').setAttribute('aria-label', document.fullscreenElement ? '全画面を終了する' : '全画面にする'));
-  document.addEventListener('visibilitychange', () => { if (document.hidden) { clearTimeout(autoTimer); if (audioContext) audioContext.suspend().catch(() => {}); } else { scheduleAuto(); if (sound && audioContext) audioContext.resume().catch(() => {}); } });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) clearTimeout(autoTimer); else scheduleAuto(); syncAudio(); });
   document.addEventListener('keydown', event => {
     if (modal.open || event.repeat || event.altKey || event.ctrlKey || event.metaKey) return;
     const focusedButton = document.activeElement?.closest('button,a');

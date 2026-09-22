@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const base = __dirname;
 const port = Number(process.env.BUNRI_PORT || 8792);
-const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.png': 'image/png', '.md': 'text/plain; charset=utf-8' };
+const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.mp3': 'audio/mpeg', '.png': 'image/png', '.md': 'text/plain; charset=utf-8' };
 const server = http.createServer((request, response) => {
   if (!['GET', 'HEAD'].includes(request.method)) { response.writeHead(405); response.end(); return; }
   let name;
