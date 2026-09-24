@@ -54,7 +54,7 @@ test(`${courseId}: all correct and all incorrect answers produce accurate scores
 });
 
 test(`${courseId}: switching courses gives the next visitor a clean state`, () => {
-  const old = S.createState(courseId === 'senior' ? 'elementary' : 'senior'); old.history.push({ text: 'previous visitor' }); old.learned.push('binary'); old.affection = 6;
+  const old = S.createState(courseId === 'senior' ? 'junior' : 'senior'); old.history.push({ text: 'previous visitor' }); old.learned.push('binary'); old.affection = 6;
   const fresh = S.createState(courseId);
   assert.equal(S.course(fresh).id, courseId);
   assert.deepEqual(fresh.history, []); assert.deepEqual(fresh.learned, []); assert.equal(fresh.affection, 0);
@@ -65,7 +65,6 @@ test(`${courseId}: switching courses gives the next visitor a clean state`, () =
 
 test('each course has its own complete lessons and mathematically correct answer keys', () => {
   const expectedAnswers = {
-    elementary: ['2つ', 'きょうしつ', '3ばん目'],
     junior: ['6', '「受付で確認」', '4回'],
     senior: ['11', '「受付で確認」', '3回']
   };
@@ -84,25 +83,11 @@ test('each course has its own complete lessons and mathematically correct answer
       prompts.add(lesson.quiz.prompt);
     }
   }
-  assert.equal(prompts.size, 9, 'the three courses must offer different questions');
-});
-
-test('elementary story, quizzes, and endings do not inherit advanced vocabulary', () => {
-  const state = S.createState('elementary');
-  const forbidden = /二進数|二分探索|線形探索|条件分岐|アルゴリズム|\bAND\b|\bNOT\b|\btrue\b/;
-  for (let index = 0; index < S.scenes.length; index++) {
-    state.index = index;
-    const current = S.scene(state);
-    assert.doesNotMatch(JSON.stringify(current), forbidden, current.id);
-  }
-  for (const affection of [0, 2, 6]) {
-    state.affection = affection;
-    assert.doesNotMatch(JSON.stringify(S.endingContent(state)), forbidden);
-  }
+  assert.equal(prompts.size, 6, 'the two courses must offer different questions');
 });
 
 test('unknown courses are rejected instead of silently selecting the wrong material', () => {
-  for (const invalid of ['missing', 'toString', '__proto__', null]) assert.throws(() => S.createState(invalid), RangeError);
+  for (const invalid of ['elementary', 'missing', 'toString', '__proto__', null]) assert.throws(() => S.createState(invalid), RangeError);
 });
 
 test('teacher story is separate and every visitor starts without the previous mode or records', () => {
@@ -116,7 +101,7 @@ test('teacher story is separate and every visitor starts without the previous mo
     assert.notEqual(lesson, S.courses.senior.lessons.find(l => l.id === lesson.id));
     assert.ok(lesson.quiz.options[lesson.quiz.correct]);
   }
-  for (const courseId of ['elementary', 'junior', 'senior', 'adult']) {
+  for (const courseId of ['junior', 'senior', 'adult']) {
     adult.history.push({ text: 'previous visitor' }); adult.affection = 6; adult.learned.push('binary');
     const fresh = S.createState(courseId);
     assert.deepEqual(fresh.history, []); assert.deepEqual(fresh.answers, []); assert.deepEqual(fresh.learned, []);

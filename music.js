@@ -12,6 +12,15 @@
       buddy: { title: '恋を、栞にして', src: 'assets/ending-adult-buddy.mp3' }
     }
   };
+  const episodeTitles = {
+    festival: ['きみに届く星の手紙', '次の謎を、二人で', 'ひみつの通信日和'],
+    rescue: ['そのままの君の隣で', 'ふたりの修復ノート', '保存した笑い声'],
+    rain: ['雨上がりの送信', '下書きの雨音', 'それぞれの傘'],
+    presentation: ['拍手の先の名前', '余白の問い', '私の言葉で']
+  };
+  const episodeTracks = Object.fromEntries(Object.entries(episodeTitles).map(([id, titles]) => [id,
+    Object.fromEntries(['sweet', 'promise', 'buddy'].map((ending, i) => [ending, { title: titles[i], src: `assets/ending-${id}-${ending}.mp3` }]))]));
+  function getTrack(mode, episodeId, ending) { return episodeId === 'lecture' ? tracks[mode][ending] : episodeTracks[episodeId][ending]; }
   function createPlayer(audio, onChange = () => {}, onError = () => {}) {
     let track = null, enabled = false, visible = true, revision = 0;
     audio.loop = true; audio.preload = 'none'; audio.volume = .48;
@@ -43,7 +52,7 @@
       }
     };
   }
-  const api = { tracks, createPlayer };
+  const api = { tracks, episodeTracks, getTrack, createPlayer };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.BunriMusic = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);
