@@ -1,4 +1,5 @@
 @charset "UTF-8";
+/* Button refinements are grouped at the end of this stylesheet. */
 /* Short-story library: every episode remains a self-contained festival playthrough. */
 dialog.episode-picker{width:min(1000px,calc(100vw - 32px))}
 .episode-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
@@ -41,3 +42,216 @@ dialog.mode-picker{width:min(760px,calc(100vw - 32px))}.mode-picker h2{margin-bo
 @media(max-width:600px){.mode-list{grid-template-columns:1fr;gap:12px}.mode-option{min-height:0;padding:20px}.mode-caption{margin-bottom:13px}.mode-option>strong{font-size:23px;margin-bottom:7px}.mode-story{margin-bottom:10px;font-size:13px}.mode-description{margin-bottom:13px}.mode-link{padding-top:11px}.mode-picker h2{font-size:22px;letter-spacing:1px}.adult-intro-modal h2{font-size:21px}.adult-intro .adult-catch{font-size:22px}.adult-intro .primary-button{font-size:11px;padding:14px}.mode-caption{font-size:9px}.adult-course .chapter-title{font-size:16px}}
 dialog.course-picker{width:min(660px,calc(100vw - 32px))}.course-picker h2{margin-bottom:14px}.course-intro{font-size:13px;line-height:1.9;margin:0 0 21px}.course-intro>span{font-size:11px;color:var(--muted)}.course-list{display:grid;gap:11px}.course-option{display:flex;align-items:center;gap:16px;width:100%;text-align:left;background:#f8f9f1;border:1px solid #cbd5c8;padding:18px 20px;border-radius:5px;transition:background .15s,border-color .15s}.course-option:hover{background:#eaf0e4;border-color:#708f7d}.course-option:focus-visible{outline-offset:2px}.course-number{font:19px Georgia,serif;color:#a18b56;flex-shrink:0}.course-details{display:block;flex:1;min-width:0}.course-heading{display:flex;align-items:baseline;flex-wrap:wrap;gap:8px 13px;margin-bottom:7px}.course-heading strong{font-size:19px;font-family:var(--serif);font-weight:500;letter-spacing:1px}.course-heading rt{font:8px var(--sans);color:#687d74;letter-spacing:1px}.course-mood{font-size:10px;letter-spacing:.5px;color:#59735d}.course-description{display:block;font-size:12px;line-height:1.8;margin-bottom:4px}.course-topics{display:block;font-size:10px;color:#71816e;letter-spacing:.5px;line-height:1.8}.course-arrow{font-size:22px;color:#8d9f8a;flex-shrink:0}.course-footnote{font-size:11px!important;color:#75816f;margin-bottom:0}.notebook-course{display:inline-block;font-size:11px;padding:5px 10px;background:#eaf0e4;border:1px solid #d3decb;border-radius:3px}.notebook-back{margin-top:24px}.result-course{margin:0 0 10px;font-size:10px;letter-spacing:1px;color:#66816d}
 @media(max-width:760px){dialog.course-picker{padding:20px}.course-picker h2{font-size:23px}.course-intro{font-size:12px!important;margin-bottom:17px}.course-intro>span{font-size:10px}.course-option{gap:11px;padding:15px 12px}.course-number{font-size:16px}.course-heading{gap:4px 8px}.course-heading strong{font-size:18px}.course-mood{font-size:9px}.course-description{font-size:11px}.course-topics{font-size:9px}.course-arrow{font-size:17px}.course-footnote{font-size:10px!important}.chapter-label{letter-spacing:1.5px}}
+
+/* Vol.02 controls: forest ink, warm paper and a small touch of gold. */
+:root {
+  --control-radius: 11px;
+  --control-ease: 180ms ease;
+  --control-shadow: 0 4px 12px #183e4910;
+}
+button { appearance: none; -webkit-appearance: none; line-height: 1.5; }
+button:hover { filter: none; }
+button:focus-visible, a:focus-visible { outline: 3px solid #a27d32; outline-offset: 4px; }
+button:disabled { opacity: .55; transform: none; box-shadow: none; }
+button svg { display: block; flex: 0 0 auto; }
+.icon-button {
+  flex: 0 0 auto; width: 44px; height: 44px; padding: 0; line-height: 1;
+  border-color: #cbd4ca; background: #fffef9cc; box-shadow: 0 2px 5px #26465206;
+  transition: background var(--control-ease), border-color var(--control-ease), box-shadow var(--control-ease);
+}
+.icon-button svg { width: 19px; height: 19px; }
+.icon-button[aria-pressed="true"] { background: #294f57; border-color: #294f57; color: #fffaf0; }
+dialog { border-radius: 18px; border-color: #e1e2d5; box-shadow: 0 24px 90px #15354140; }
+.modal-header { gap: 18px; align-items: center; }
+.modal-header .eyebrow { min-width: 0; line-height: 1.8; }
+.modal-header .icon-button {
+  width: 44px; height: 44px; min-width: 44px; min-height: 44px; padding: 0;
+  display: grid; place-items: center; margin-left: auto; line-height: 0;
+  background: #f3f5ed; border-color: #dce2d6;
+}
+#close-modal svg { width: 18px; height: 18px; stroke-width: 1.8; }
+.primary-button {
+  position: relative; border-radius: var(--control-radius); min-height: 54px; gap: 20px;
+  background: linear-gradient(120deg, #254954, #365f60); border: 1px solid #244b53;
+  box-shadow: inset 0 1px 0 #ffffff26, 0 7px 18px #214b5420;
+  transition: transform var(--control-ease), box-shadow var(--control-ease), border-color var(--control-ease);
+}
+.primary-button:hover { background: linear-gradient(120deg, #254954, #365f60); transform: none; }
+.start-button { padding: 12px 15px 12px 23px; min-height: 60px; border-color: #95865d; }
+.button-arrow, .card-arrow, .course-arrow {
+  display: inline-grid; place-items: center; flex: 0 0 auto; letter-spacing: 0; line-height: 1;
+}
+.primary-button .button-arrow {
+  width: 32px; height: 32px; border: 1px solid #ecdbad55; border-radius: 50%;
+  background: #ffffff0a; color: #f1dfac;
+}
+.button-arrow svg { width: 17px; height: 17px; }
+.secondary-button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+  min-height: 46px; border-radius: var(--control-radius); background: #fffdf6;
+  border-color: #c4d1c6; box-shadow: var(--control-shadow);
+  transition: transform var(--control-ease), background var(--control-ease), border-color var(--control-ease), box-shadow var(--control-ease);
+}
+.secondary-button svg { width: 16px; height: 16px; }
+.title-links { gap: 10px; flex-wrap: wrap; }
+.text-button {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 44px;
+  padding: 8px 12px; gap: 8px; border-radius: 9px; border: 1px solid #cad4c3;
+  background: #fffef4b8; color: #3e625c;
+  transition: background var(--control-ease), border-color var(--control-ease), box-shadow var(--control-ease);
+}
+.text-button svg { width: 16px; height: 16px; }
+.text-button:hover { border-color: #cad4c3; }
+.mode-back { display: inline-flex; margin-top: 20px; font-size: 11px; background: #f4f6ed; }
+.glass-button {
+  min-height: 42px; min-width: 42px; justify-content: center; border-radius: 10px;
+  padding: 8px 12px; border-color: #ffffffdc; background: #fffdf4ed;
+  color: #34544f; box-shadow: 0 3px 12px #203f4210;
+  transition: background var(--control-ease), border-color var(--control-ease), box-shadow var(--control-ease);
+}
+.glass-button[data-action="auto"]::after {
+  content: ""; width: 5px; height: 5px; border-radius: 50%; background: #9ca9a0; margin-left: 3px;
+}
+.glass-button.active { background: #305a59; border-color: #305a59; color: #fffcef; }
+.glass-button.active::after { background: #f1dfac; box-shadow: 0 0 0 3px #f1dfac20; }
+.next-button {
+  min-height: 44px; padding: 5px 7px 5px 16px; gap: 12px; border: 1px solid #c6d2c3;
+  border-radius: 30px; background: #f0f4e9; color: #37584e; letter-spacing: 1px;
+  transition: background var(--control-ease), border-color var(--control-ease);
+}
+.next-button .button-arrow { width: 29px; height: 29px; border-radius: 50%; background: #345b53; color: #fff4d5; }
+.next-button .button-arrow svg { width: 15px; height: 15px; }
+.choice-button {
+  min-height: 62px; padding: 13px 15px; gap: 13px; border-radius: var(--control-radius);
+  background: #fffef8; border-color: #d0d9c9; box-shadow: 0 2px 6px #24462f05;
+  transition: background var(--control-ease), border-color var(--control-ease), box-shadow var(--control-ease);
+}
+.choice-button:hover { transform: none; background: #fffef8; border-color: #d0d9c9; }
+.choice-index {
+  display: grid; place-items: center; flex: 0 0 30px; width: 30px; height: 30px;
+  padding: 0; border: 1px solid #dce4d3; border-radius: 9px; background: #f0f4e9; color: #496649;
+}
+.choice-button::after {
+  content: ""; flex: 0 0 6px; width: 6px; height: 6px; margin-left: auto;
+  border-top: 1.5px solid #87967d; border-right: 1.5px solid #87967d; transform: rotate(45deg);
+}
+.hint-toggle {
+  min-height: 44px; padding: 9px 12px; border: 1px dashed #cbbd94; border-radius: 9px;
+  background: #faf6e9; color: #6c613c; text-decoration: none;
+}
+.hint-toggle[aria-expanded="true"] { background: #f2e9cf; border-style: solid; }
+.mode-option, .episode-option, .course-option {
+  position: relative; isolation: isolate; border-radius: 14px;
+  box-shadow: inset 0 1px 0 #ffffff80, 0 3px 10px #283f3605;
+  transition: transform var(--control-ease), border-color var(--control-ease), box-shadow var(--control-ease);
+}
+.mode-option:hover, .episode-option:hover, .course-option:hover { transform: none; box-shadow: inset 0 1px 0 #ffffff80, 0 3px 10px #283f3605; }
+.mode-option::before, .episode-option::before {
+  content: ""; position: absolute; left: -1px; top: 25px; bottom: 25px; width: 3px;
+  border-radius: 3px; background: #b2a174; opacity: .65;
+}
+.minor-option, .episode-option { background: linear-gradient(140deg, #fcfcf4, #edf3e6); border-color: #cbd7c2; }
+.mode-caption { align-items: center; gap: 8px; margin-bottom: 25px; }
+.mode-caption > .mode-identity { display: flex; align-items: center; gap: 9px; letter-spacing: 1px; opacity: 1; }
+.mode-identity > svg { width: 21px; height: 21px; color: #78937b; }
+.mode-caption > .mode-age { font-size: 9px; padding: 4px 7px; border: 1px solid #ccd9c3; border-radius: 20px; opacity: 1; }
+.mode-description { opacity: 1; color: #597160; }
+.mode-link, .episode-link { display: flex; align-items: center; justify-content: space-between; gap: 9px; padding-top: 13px; }
+.card-arrow, .course-arrow { width: 29px; height: 29px; border: 1px solid #b9c9ac; border-radius: 50%; color: #59744e; background: #ffffff70; }
+.card-arrow svg, .course-arrow svg { width: 15px; height: 15px; }
+.episode-top { align-items: center; gap: 8px; margin-bottom: 23px; }
+.episode-id { display: inline-flex; align-items: center; gap: 9px; }
+.episode-id > svg { width: 21px; height: 21px; color: #7b9579; }
+.episode-top .episode-id > span { color: #61775b; font-size: 9px; letter-spacing: 1px; }
+.episode-top > .episode-status { font-size: 8px; letter-spacing: 1px; padding: 4px 7px; border: 1px solid #d9cca6; border-radius: 5px; color: #79643c; background: #fff9e8; }
+.episode-option { padding: 23px 21px; }
+.episode-option strong { font-size: 21px; }
+.adult-option, .adult-episode {
+  background: radial-gradient(ellipse at top right, #61506d66, transparent 65%), linear-gradient(140deg, #293243, #46384e);
+  border-color: #776680; color: #fff5e2; box-shadow: inset 0 1px 0 #ffffff1a, 0 5px 16px #302e4010;
+}
+.adult-option::before, .adult-episode::before { background: #d5b878; }
+.adult-option .mode-identity > svg, .adult-episode .episode-id > svg { color: #e1cfa8; }
+.adult-option .mode-age { border-color: #b4a0bb55; color: #efe3ef; background: #ffffff05; }
+.adult-option .mode-description, .adult-episode .episode-topics { color: #ded4e0; }
+.adult-episode .episode-id > span { color: #e1d7e5; }
+.adult-episode .episode-status { color: #f3d69d; border-color: #c7ae754d; background: #d9b5700d; }
+.adult-option .mode-link, .adult-episode .episode-link { color: #f0d69f; border-color: #ecd6ad33; }
+.adult-option .card-arrow, .adult-episode .card-arrow { background: #f2d9a512; border-color: #dfc69666; color: #efd49c; }
+.course-option { padding: 20px; gap: 18px; background: #fcfcf5; border-color: #d2dcca; }
+.course-option:hover { background: #fcfcf5; border-color: #d2dcca; }
+.course-option[data-course="senior"] { background: #f8f7ee; }
+.course-number { display: grid; place-items: center; width: 38px; height: 46px; border-radius: 18px 18px 8px 8px; border: 1px solid #d9cfb1; background: #f7f1df; color: #8b7445; }
+.course-heading { gap: 6px 13px; }
+.course-mood { border-left: 1px solid #c5d2be; padding-left: 10px; }
+.course-description { color: #536d61; }
+.course-topics { color: #66785e; }
+.adult-intro .primary-button, .adult-course .primary-button { background: linear-gradient(120deg, #493b54, #68516d); border-color: #685370; }
+.adult-course .choice-index { background: #f2ebf4; border-color: #ded2e1; color: #78627f; }
+.adult-course .next-button { background: #f4edf4; border-color: #d6c5da; color: #694f73; }
+.adult-course .next-button .button-arrow { background: #66506f; }
+.adult-course .glass-button.active { background: #5e4867; border-color: #5e4867; }
+.ending-actions .primary-button, .ending-actions .secondary-button { min-height: 46px; }
+#ending-music-toggle[aria-pressed="true"] { background: #edf3e7; border-color: #849b76; }
+.adult-course #ending-music-toggle[aria-pressed="true"] { background: #f1e9f3; border-color: #a18ba9; }
+.confirm-actions { align-items: stretch; }
+.confirm-actions > button { flex: 1; justify-content: center; }
+@media (hover: hover) and (pointer: fine) {
+  .icon-button:hover { background: #eaf0e2; border-color: #8fa084; box-shadow: 0 3px 10px #294c3914; }
+  .icon-button[aria-pressed="true"]:hover { background: #365f60; color: white; }
+  .primary-button:hover { transform: translateY(-2px); box-shadow: inset 0 1px 0 #ffffff26, 0 10px 22px #214b5430; border-color: #9a8a60; }
+  .secondary-button:hover, .text-button:hover, .glass-button:not(.active):hover { background: #ecf2e5; border-color: #9aae8d; box-shadow: 0 3px 10px #244b3112; }
+  .next-button:hover { background: #e5eedb; border-color: #8ea582; }
+  .choice-button:hover { background: #edf3e5; border-color: #8da67f; box-shadow: 0 4px 12px #35543612; }
+  .adult-course .choice-button:hover, .adult-course .next-button:hover { background: #eee6f1; border-color: #a68bb0; }
+  .mode-option:hover, .episode-option:hover, .course-option:hover { transform: translateY(-3px); border-color: #9caa7e; box-shadow: inset 0 1px 0 #ffffff70, 0 10px 24px #283f3615; }
+  .adult-option:hover, .adult-episode:hover { border-color: #d0b881; box-shadow: inset 0 1px 0 #ffffff20, 0 10px 24px #30273f26; }
+}
+.primary-button:active, .secondary-button:active, .mode-option:active, .episode-option:active, .course-option:active { transform: translateY(1px); box-shadow: inset 0 2px 5px #19383312; }
+.icon-button:active, .text-button:active, .glass-button:active, .next-button:active, .choice-button:active { box-shadow: inset 0 2px 5px #19383318; }
+@media (max-width: 760px) {
+  .header-right { gap: 8px; }
+  .festival-label { font-size: 9px; letter-spacing: .4px; }
+  .icon-button { width: 40px; height: 40px; }
+  .modal-header .icon-button { width: 44px; height: 44px; }
+  dialog { padding: 22px; border-radius: 16px; }
+  dialog h2 { line-height: 1.6; letter-spacing: 1.5px; }
+  .start-button { min-height: 58px; padding: 10px 13px 10px 20px; }
+  .text-button { font-size: 11px; padding: 8px 10px; }
+  .title-links { gap: 8px; }
+  .glass-button { min-height: 44px; min-width: 40px; padding: 8px 10px; }
+  .play-tools { gap: 6px; }
+  .play-top { display: grid; grid-template-columns: 1fr; row-gap: 12px; }
+  .play-tools { justify-self: end; }
+  .choice-panel { top: 205px; max-height: calc(100% - 235px); }
+  .lecture-card { top: 205px; }
+  .course-option { padding: 16px 12px; gap: 12px; }
+  .course-number { width: 32px; height: 41px; font-size: 17px; }
+  .course-arrow { width: 26px; height: 26px; }
+  .course-heading { gap: 5px; }
+  .course-mood { border-left: 0; padding-left: 0; }
+  .course-description { font-size: 11px; }
+  .course-topics { font-size: 10px; letter-spacing: 0; }
+  .episode-option { padding: 20px; }
+  .episode-top { margin-bottom: 14px; }
+  .episode-option strong { font-size: 21px; }
+  .episode-topics { font-size: 11px; }
+  .next-button { font-size: 11px; letter-spacing: .5px; gap: 7px; padding-left: 12px; flex-shrink: 0; }
+  .next-button .button-arrow { width: 26px; height: 26px; }
+  .choice-button { padding: 13px 12px; gap: 10px; }
+  .choice-index { flex-basis: 28px; width: 28px; height: 28px; }
+  .ending-actions > button { flex: 1 1 auto; }
+  .confirm-actions { flex-wrap: wrap; }
+  .confirm-actions > button { flex: 1 1 160px; }
+}
+@media (max-width: 600px) {
+  .mode-caption { margin-bottom: 19px; }
+  .mode-option { padding: 22px 20px; }
+  .mode-link { padding-top: 11px; }
+}
+@media (max-width: 390px) {
+  dialog, dialog.course-picker { padding: 20px 17px; }
+  .mode-option, .episode-option { padding: 19px 16px; }
+  .mode-caption > .mode-identity { gap: 7px; font-size: 8px; letter-spacing: .6px; }
+  .mode-caption > .mode-age { font-size: 8px; padding: 4px 6px; }
+}
