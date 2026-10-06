@@ -13,6 +13,7 @@ test(`${courseId}: all 729 combinations finish, learn all lessons, and separate 
       while (S.scene(state).type !== 'ending') {
         assert.ok(++steps < 50, 'story must terminate');
         const current = S.scene(state);
+        if (current.type === 'minigame') S.finishMiniGame(state, true);
         if (current.type === 'quiz' || current.type === 'choice') {
           assert.equal(S.advance(state), false, 'an unanswered question cannot be skipped');
           const selected = current.type === 'quiz' ? quiz % 3 : social % 3;
@@ -45,6 +46,7 @@ test(`${courseId}: all correct and all incorrect answers produce accurate scores
     const state = S.createState(courseId);
     while (S.scene(state).type !== 'ending') {
       const current = S.scene(state);
+        if (current.type === 'minigame') S.finishMiniGame(state, true);
       if (current.type === 'quiz') S.answer(state, allCorrect ? current.correct : (current.correct + 1) % 3);
       if (current.type === 'choice') S.answer(state, 1);
       S.advance(state);

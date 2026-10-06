@@ -3,6 +3,8 @@
   const courses = typeof module !== 'undefined' && module.exports ? require('./courses.js') : root.BunriCourses;
   const adult = typeof module !== 'undefined' && module.exports ? require('./adult-story.js') : root.BunriAdultStory;
   const episodes = typeof module !== 'undefined' && module.exports ? require('./episodes.js') : root.BunriEpisodes;
+  const staging = typeof module !== 'undefined' && module.exports ? require('./staging.js') : root.BunriStaging;
+  const minigames = typeof module !== 'undefined' && module.exports ? require('./minigames.js') : root.BunriMinigames;
   const scenes = [
     { id: 'intro', chapter: 0, speaker: 'あなた', text: '名古屋文理大学、午後の講義。窓から差し込む光が、机に四角い模様を作っている。空いている席を探していると、窓際の学生がこちらを見た。' },
     { id: 'meet', speaker: '御家雄一', text: '「ここ、空いてるよ。今日、ペアで課題をやるんだって。……よかったら、俺と組まない？」' },
@@ -35,7 +37,7 @@
     { id: 'algorithmQuiz', type: 'quiz', lesson: 'algorithm', lessonPart: 'quiz' },
     { id: 'algorithmThought', speaker: 'あなた', text: '二人で最後の答えを書き込む。最初は記号にしか見えなかったものが、少しずつ意味を持ち始めていた。隣の席も、さっきより近く感じる。' },
     { id: 'algorithmFlirt', speaker: '御家雄一', text: '「でもさ。教室で君を見つけたときは、二分探索じゃなかった」雄一は提出ボタンから目を上げた。「……最初から、こっちに来てくれたらいいなって思ってた」' },
-    { id: 'fluster', speaker: 'あなた', text: '予想外の言葉に、返事が止まる。雄一は慌てて「今の、ノートに書かなくていいから」と付け足した。もう遅い。たぶん、しばらく覚えている。' },
+    { id: 'fluster', speaker: 'あなた', quoteSpeakers: ['御家雄一'], text: '予想外の言葉に、返事が止まる。雄一は慌てて付け足した。「今の、ノートに書かなくていいから」もう遅い。たぶん、しばらく覚えている。' },
     { id: 'wrapup', chapter: 4, speaker: '担当教員', text: '「はい、今日はここまで。わからなかったところを一緒に考える、それも大切な学びです。課題を提出したペアから終了してください」' },
     { id: 'submitted', speaker: '御家雄一', text: '「提出、完了。ありがとう。君とだったから、いつもの講義より楽しかった」閉じかけたノートの間から、あの条件欄が見える。まだ、実行前の一行。' },
     { id: 'farewell', type: 'choice', prompt: '講義が終わった。隣の王子様に、ひと言。', options: [
@@ -48,21 +50,21 @@
   const endings = {
     sweet: { number: '01', label: 'SWEET END', title: '君だけの、王子様。', quote: '「みんなの王子様より、君の隣がいい」', text: '教室を出るとき、雄一はあなたの歩幅に合わせて立ち止まった。ノートの条件欄には、二つのtrue。手が触れるくらいの距離で、二人は文化祭のにぎわいへ歩き出す。今日覚えたどの手順にもない、少し特別な続きが始まった。', after: '恋のアルゴリズムは、ここから二人で。' },
     promise: { number: '02', label: 'NEXT CHAPTER END', title: '次の講義も、隣で。', quote: '「この席、来週も空けておくね」', text: '二人で学んだノートには、答えと、小さな星が一つ。名前のつかない気持ちは、まだ未定義のままでいい。次にこの教室へ来るのが、少し楽しみになった。雄一も同じ気持ちなのは、振り返ったときの笑顔でわかった。', after: 'まだ書かれていない、二行目がある。' },
-    buddy: { number: '03', label: 'BEST BUDDY END', title: '最高の相棒、発見。', quote: '「君と組むと、なんでも楽しくなるね」', text: '向かう先は、もちろん焼きそばの屋台。効率のいいルートを考える雄一と、ソースの香りを頼りに進むあなた。方法は違っても、目指す先は同じだ。「次の課題も、このチームで」王子様は笑って、拳を軽く合わせてきた。', after: '二人なら、難問だってきっと解ける。' }
+    buddy: { number: '03', label: 'BEST BUDDY END', title: '最高の相棒、発見。', quote: '「君と組むと、なんでも楽しくなるね」', text: '向かう先は、もちろん焼きそばの屋台。効率のいいルートを考える雄一と、ソースの香りを頼りに進むあなた。方法は違っても、目指す先は同じだ。「次の課題も、このチームで」王子様は笑って、拳を軽く合わせてきた。', after: '二人なら、難問だってきっと解ける。', quoteSpeakers: ['御家雄一'] }
   };
   function createState(courseId = 'junior', episodeId = 'lecture') {
     if (courseId !== 'adult' && !Object.prototype.hasOwnProperty.call(courses, courseId)) throw new RangeError('Unknown course: ' + courseId);
     if (!episodes.catalog[courseId === 'adult' ? 'adult' : 'minor'].some(e => e.id === episodeId)) throw new RangeError('Unknown episode: ' + episodeId);
-    return { courseId, episodeId, mode: courseId === 'adult' ? 'adult' : 'minor', index: 0, chapter: 0, affection: 0, answers: [], choices: [], learned: [], history: [], feedback: null };
+    return { courseId, episodeId, mode: courseId === 'adult' ? 'adult' : 'minor', index: 0, chapter: 0, affection: 0, answers: [], choices: [], learned: [], history: [], feedback: null, miniGame: null, minigames: [] };
   }
   function pack(state) { return state.episodeId === 'lecture' ? null : episodes.packs[state.courseId][state.episodeId]; }
   function episode(state) { return episodes.catalog[state.mode].find(e => e.id === state.episodeId); }
   function course(state) { return pack(state)?.course || (state.mode === 'adult' ? adult.course : courses[state.courseId]); }
-  function activeScenes(state) { return pack(state)?.scenes || (state.mode === 'adult' ? adult.scenes : scenes); }
+  function activeScenes(state) { return minigames.expand(staging.expand(pack(state)?.scenes || (state.mode === 'adult' ? adult.scenes : scenes), state), state); }
   function scene(state) {
     const base = activeScenes(state)[state.index];
     const selected = course(state);
-    if (base.variants) return { ...base, text: base.variants[state.choices[base.choiceIndex]] };
+    if (base.variants) return { ...base, text: base.variants[state.choices[base.choiceIndex]], quoteSpeakers: base.variantSpeakers?.[state.choices[base.choiceIndex]] || base.quoteSpeakers };
     if (base.lessonPart) {
       const lesson = selected.lessons.find(item => item.id === base.lesson);
       if (base.lessonPart === 'intro') return { ...base, text: lesson.intro };
@@ -71,7 +73,19 @@
     }
     return { ...base, ...selected.sceneOverrides[base.id] };
   }
-  function advance(state) { if (scene(state).type === 'ending' || ((scene(state).type === 'quiz' || scene(state).type === 'choice') && !state.feedback)) return false; state.feedback = null; state.index++; if (scene(state).chapter !== undefined) state.chapter = scene(state).chapter; return true; }
+  function advance(state) { if (scene(state).type === 'ending' || (scene(state).type === 'minigame' && !state.minigames.some(r => r.key === scene(state).minigame)) || ((scene(state).type === 'quiz' || scene(state).type === 'choice') && !state.feedback)) return false; state.feedback = null; state.index++; if (scene(state).chapter !== undefined) state.chapter = scene(state).chapter; return true; }
+  function startMiniGame(state) {
+    const current = scene(state);
+    if (current.type !== 'minigame') return null;
+    if (!state.miniGame || state.miniGame.key !== current.minigame) state.miniGame = minigames.create(current.minigame, state.courseId);
+    return state.miniGame;
+  }
+  function finishMiniGame(state, assisted = false) {
+    const game = startMiniGame(state);
+    if (!game || state.minigames.some(r => r.key === game.key) || (!assisted && game.status !== 'complete')) return false;
+    state.minigames.push({ key: game.key, assisted: Boolean(assisted), attempts: game.attempts, hints: game.hints, reward: minigames.config(game.key).reward });
+    return true;
+  }
   function answer(state, index) {
     const current = scene(state);
     if (state.feedback || !['quiz', 'choice'].includes(current.type) || !Number.isInteger(index) || index < 0 || index >= current.options.length) return false;
@@ -82,13 +96,13 @@
       state.feedback = { type: 'quiz', correct, text: correct ? current.right : current.wrong, explanation: current.explanation };
     } else {
       const choice = current.options[index]; state.affection += choice.points; state.choices.push(index);
-      state.feedback = { type: 'choice', text: choice.response };
+      state.feedback = { type: 'choice', text: choice.response, quoteSpeakers: choice.responseSpeakers };
     }
     return true;
   }
   function ending(state) { return state.affection >= 4 ? 'sweet' : state.affection >= 2 ? 'promise' : 'buddy'; }
   function endingContent(state) { const key = ending(state); if (pack(state)) return { ...pack(state).endings[key] }; return state.mode === 'adult' ? { ...adult.endings[key] } : { ...endings[key], ...course(state).endings?.[key] }; }
-  const api = { courses, adult, episodes: episodes.catalog, episode, course, scenes, activeScenes, createState, scene, advance, answer, ending, endingContent };
+  const api = { courses, adult, episodes: episodes.catalog, episode, course, scenes, activeScenes, createState, scene, advance, answer, ending, endingContent, startMiniGame, finishMiniGame };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.BunriStory = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

@@ -29,9 +29,12 @@ for (const courseId of ['junior','senior','adult']) {
               const before = JSON.stringify(state);
               assert.equal(S.answer(state, answer), false);
               assert.equal(JSON.stringify(state), before);
+            } else if (current.type === 'minigame') {
+              assert.equal(S.advance(state), false);
+              assert.ok(S.finishMiniGame(state, true));
             } else {
               assert.ok(current.text?.length > 0, current.id);
-              if (current.variants) detours.add(current.text);
+              if (current.id === 'firstDetour') detours.add(current.text);
             }
             assert.ok(S.advance(state));
           }
