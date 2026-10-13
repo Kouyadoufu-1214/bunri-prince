@@ -66,8 +66,9 @@
     }
     if (ending) { expression = ending === 'sweet' ? 'shy' : 'smile'; distance = ending === 'sweet' ? 'close' : 'normal'; }
     // Establish the episode outfit immediately; keep close-ups for emotional beats.
+    if (scene.distance) distance = scene.distance;
     const exclusive = scene.exclusive || Boolean(ending) || (!scene.variants && state.feedback?.type !== 'choice' && expression !== 'shy');
-    return { expression, distance, src: exclusive ? exclusiveAssets[`${state.mode}:${state.episodeId}`] : assets[expression], mood: state.episodeId === 'rain' && state.chapter < 4 ? 'rain' : state.chapter === 4 ? 'sunset' : 'day' };
+    return { expression, distance, beat: scene.beat || 'calm', src: exclusive ? exclusiveAssets[`${state.mode}:${state.episodeId}`] : assets[expression], mood: state.episodeId === 'rain' && state.chapter < 4 ? 'rain' : state.chapter === 4 ? 'sunset' : 'day' };
   }
   const api = { expand, direction, assets, exclusiveAssets };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

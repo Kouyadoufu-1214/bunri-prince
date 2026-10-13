@@ -76,6 +76,7 @@
     stage.dataset.mood = cue.mood;
     stage.dataset.expression = cue.expression;
     stage.dataset.scene = S.scene(state).id;
+    stage.dataset.beat = cue.beat || 'calm';
     const sprite = stage.querySelector('.character-sprite');
     const token = cue.src;
     stage.dataset.pendingSprite = token;
@@ -93,28 +94,28 @@
     app.innerHTML = `<section class="stage title-stage" aria-labelledby="game-title">${art}${sparkles}
       <div class="title-content"><p class="title-location">名古屋文理大学、ある日の講義室。</p>
       <p class="title-kicker">その恋は、まだ未定義。</p><h1 class="game-title" id="game-title">ブンリの<span class="second-line"><span class="crown-decoration">${icon('crown')}</span>王子様</span></h1>
-      <div class="title-english">THE PRINCE OF BUNRI</div><p class="title-description">隣の席の恋。先生に言えない恋。<br>限定立ち絵6枚・ミニゲーム6種。<br>1話7〜10分、恋と遊びの短編集。</p>
+      <div class="title-english">THE PRINCE OF BUNRI</div><p class="title-description">隣の席の恋。先生に言えない恋。<br>選んだ言葉が、ふたりの距離を変える。<br>1話10〜15分、恋と遊びの短編集。</p>
       <button class="primary-button start-button" id="start-game">物語をはじめる<span class="button-arrow" aria-hidden="true">${icon('arrow')}</span></button>
       <div class="title-links"><button class="text-button" data-action="how">${icon('info')}あそびかた</button><button class="text-button" data-action="notebook">${icon('book')}講義ノート</button></div></div>
-      <div class="title-bottom"><div class="facts"><div class="fact"><strong>7–10</strong><div><span>MINUTES</span><small>ふたりで遊ぶ物語</small></div></div><div class="fact"><strong>6</strong><div><span>STORIES</span><small>選べる短編集</small></div></div><div class="fact"><strong>18</strong><div><span>ENDINGS</span><small>各物語に3つの結末</small></div></div></div><div class="character-note"><small>どの物語でも、出会うのは</small><p>御家雄一<span>THE PRINCE</span></p></div></div></section>`;
+      <div class="title-bottom"><div class="facts"><div class="fact"><strong>10–15</strong><div><span>MINUTES</span><small>ふたりで遊ぶ物語</small></div></div><div class="fact"><strong>6</strong><div><span>STORIES</span><small>選べる短編集</small></div></div><div class="fact"><strong>18</strong><div><span>ENDINGS</span><small>各物語に3つの結末</small></div></div></div><div class="character-note"><small>どの物語でも、出会うのは</small><p>御家雄一<span>THE PRINCE</span></p></div></div></section>`;
     document.getElementById('start-game').addEventListener('click', () => chooseMode());
     endingTrack = null; musicError = false; syncAudio();
     bindCommon();
   }
   function chooseMode(preview = false) {
-    openModal('SIX STORIES, ONE PRINCE', 'どちらの物語をひらく？', `<p class="course-intro">恋も、学びも、あなたのペースで。<br><span>各モードに3編。1編7〜10分、ミニ問題3問と結末3種類。</span></p><div class="mode-list"><button class="mode-option minor-option" id="minor-mode"><span class="mode-caption"><span class="mode-identity">${icon('book')}<span>CAMPUS STORY</span></span><span class="mode-age">18歳未満向け</span></span><strong>未成年向け</strong><span class="mode-story">隣の席の、王子様。</span><span class="mode-description">同級生の雄一と、講義・謎解き・展示の大ピンチ。<br>中学生・高校生の2コースから選べます。</span><span class="mode-link"><span>${preview ? '学べる内容を見る' : 'コースをえらぶ'}</span><span class="card-arrow">${icon('arrow')}</span></span></button><button class="mode-option adult-option" id="adult-mode"><span class="mode-caption"><span class="mode-identity">${icon('moon')}<span>AFTER CLASS</span></span><span class="mode-age">18歳以上向け</span></span><strong>成年向け</strong><span class="mode-story">先生と呼べなくなる、その日まで。</span><span class="mode-description">大学4年生のあなたと、教員の御家雄一。<br>講義・雨の日・最終発表。言えない恋の3編。</span><span class="mode-link"><span>${preview ? '学べる内容を見る' : '物語の紹介へ'}</span><span class="card-arrow">${icon('arrow')}</span></span></button></div><p class="course-footnote">未成年向けの物語は、大人の方も遊べます。</p>`);
+    openModal('SIX STORIES, ONE PRINCE', 'どちらの物語をひらく？', `<p class="course-intro">恋も、学びも、あなたのペースで。<br><span>各モードに3編。1編10〜15分、ミニ問題3問と結末3種類。</span></p><div class="mode-list"><button class="mode-option minor-option" id="minor-mode"><span class="mode-caption"><span class="mode-identity">${icon('book')}<span>CAMPUS STORY</span></span><span class="mode-age">18歳未満向け</span></span><strong>未成年向け</strong><span class="mode-story">隣の席の、王子様。</span><span class="mode-description">同級生の雄一と、講義・謎解き・展示の大ピンチ。<br>中学生・高校生の2コースから選べます。</span><span class="mode-link"><span>${preview ? '学べる内容を見る' : 'コースをえらぶ'}</span><span class="card-arrow">${icon('arrow')}</span></span></button><button class="mode-option adult-option" id="adult-mode"><span class="mode-caption"><span class="mode-identity">${icon('moon')}<span>AFTER CLASS</span></span><span class="mode-age">18歳以上向け</span></span><strong>成年向け</strong><span class="mode-story">先生と呼べなくなる、その日まで。</span><span class="mode-description">大学4年生のあなたと、教員の御家雄一。<br>講義・雨の日・最終発表。言えない恋の3編。</span><span class="mode-link"><span>${preview ? '学べる内容を見る' : '物語の紹介へ'}</span><span class="card-arrow">${icon('arrow')}</span></span></button></div><p class="course-footnote">未成年向けの物語は、大人の方も遊べます。</p>`);
     modal.classList.add('mode-picker');
     document.getElementById('minor-mode').addEventListener('click', () => chooseCourse(preview));
     document.getElementById('adult-mode').addEventListener('click', () => preview ? chooseEpisode('adult', true) : adultIntro());
   }
   function adultIntro() {
-    openModal('AFTER CLASS / 成年向け', '先生と呼べなくなる、その日まで。', `<div class="adult-intro"><span class="audience-badge">18歳以上向け・教員との恋</span><p class="adult-catch">好きになる条件なんて、<br>教えてくれなかった。</p><p>あなたは22歳の大学4年生。<br>講義、雨の日の作業、最後の発表。<br>三つの物語から、先生に言えない恋を選べます。</p><p>先生と学生。その距離を前に、あなたは何を伝える？</p><div class="adult-specs"><span>全3編・1編7〜10分</span><span>各編ミニゲーム ＋ 問題3問</span><span>各編結末 × 3</span></div><p class="modal-note">登場人物の設定・関係・台詞はフィクションです。<br>学習問題にはヒントと解説があります。</p><button class="primary-button" id="start-adult">18歳以上・物語を選ぶ <span class="button-arrow" aria-hidden="true">${icon('arrow')}</span></button><button class="text-button mode-back" id="back-to-modes">← モード選択に戻る</button></div>`);
+    openModal('AFTER CLASS / 成年向け', '先生と呼べなくなる、その日まで。', `<div class="adult-intro"><span class="audience-badge">18歳以上向け・教員との恋</span><p class="adult-catch">好きになる条件なんて、<br>教えてくれなかった。</p><p>あなたは22歳の大学4年生。<br>講義、雨の日の作業、最後の発表。<br>三つの物語から、先生に言えない恋を選べます。</p><p>先生と学生。その距離を前に、あなたは何を伝える？</p><div class="adult-specs"><span>全3編・1編10〜15分</span><span>各編ミニゲーム ＋ 問題3問</span><span>各編結末 × 3</span></div><p class="modal-note">登場人物の設定・関係・台詞はフィクションです。<br>学習問題にはヒントと解説があります。</p><button class="primary-button" id="start-adult">18歳以上・物語を選ぶ <span class="button-arrow" aria-hidden="true">${icon('arrow')}</span></button><button class="text-button mode-back" id="back-to-modes">← モード選択に戻る</button></div>`);
     modal.classList.add('adult-intro-modal');
     document.getElementById('start-adult').addEventListener('click', () => chooseEpisode('adult'));
     document.getElementById('back-to-modes').addEventListener('click', () => chooseMode());
   }
   function chooseCourse(preview = false) {
-    openModal('CAMPUS STORY / 未成年向け', 'コースをえらぼう', `<p class="course-intro">隣の席の雄一と、いっしょに学ぼう。学年はむずかしさの目安です。<br><span>どのコースも7〜10分・ミニゲームと3つの問題。ヒントつきです。</span></p><div class="course-list">${Object.values(S.courses).map((course, i) => `<button class="course-option" data-course="${course.id}" aria-label="${course.label}で${preview ? '内容を見る' : '物語を選ぶ'}"><span class="course-number" aria-hidden="true">0${i + 1}</span><span class="course-details"><span class="course-heading"><strong><ruby>${course.label.replace('コース', '')}<rt>${course.reading}</rt></ruby>コース</strong><span class="course-mood">${course.mood}</span></span><span class="course-description">${course.description}</span><span class="course-topics">${course.topics}</span></span><span class="course-arrow" aria-hidden="true">${icon('arrow')}</span></button>`).join('')}</div><p class="course-footnote">${preview ? 'えらぶと、そのコースで学べる内容を見られます。' : 'このあと、お話をえらべます。まちがえても最後まで遊べます。'}</p><button class="text-button mode-back" id="back-to-modes">← モード選択に戻る</button>`);
+    openModal('CAMPUS STORY / 未成年向け', 'コースをえらぼう', `<p class="course-intro">隣の席の雄一と、いっしょに学ぼう。学年はむずかしさの目安です。<br><span>どのコースも10〜15分・ミニゲームと3つの問題。ヒントつきです。</span></p><div class="course-list">${Object.values(S.courses).map((course, i) => `<button class="course-option" data-course="${course.id}" aria-label="${course.label}で${preview ? '内容を見る' : '物語を選ぶ'}"><span class="course-number" aria-hidden="true">0${i + 1}</span><span class="course-details"><span class="course-heading"><strong><ruby>${course.label.replace('コース', '')}<rt>${course.reading}</rt></ruby>コース</strong><span class="course-mood">${course.mood}</span></span><span class="course-description">${course.description}</span><span class="course-topics">${course.topics}</span></span><span class="course-arrow" aria-hidden="true">${icon('arrow')}</span></button>`).join('')}</div><p class="course-footnote">${preview ? 'えらぶと、そのコースで学べる内容を見られます。' : 'このあと、お話をえらべます。まちがえても最後まで遊べます。'}</p><button class="text-button mode-back" id="back-to-modes">← モード選択に戻る</button>`);
     modal.classList.add('course-picker');
     modal.querySelectorAll('[data-course]').forEach(button => button.addEventListener('click', () => {
       chooseEpisode(button.dataset.course, preview);
@@ -124,7 +125,7 @@
   function chooseEpisode(courseId, preview = false) {
     const mode = courseId === 'adult' ? 'adult' : 'minor';
     openModal(mode === 'adult' ? 'AFTER CLASS / 成年向け' : 'CAMPUS STORY / 未成年向け', '今日の物語を選ぼう',
-      `<p class="course-intro">${'どの物語からでも、初めて遊べます。'}<br><span>1編7〜10分・限定立ち絵・ミニゲーム・結末3種類。${'限定立ち絵は冒頭から。ミニゲームは本編の途中でも遊べます。'}</span></p><div class="episode-list">${S.episodes[mode].map((entry, i) => {
+      `<p class="course-intro">${'どの物語からでも、初めて遊べます。'}<br><span>1編10〜15分・限定立ち絵・ミニゲーム・結末3種類。${'限定立ち絵は冒頭から。ミニゲームは本編の途中でも遊べます。'}</span></p><div class="episode-list">${S.episodes[mode].map((entry, i) => {
         const selected = S.createState(courseId, entry.id), meta = S.episode(selected), mini = M.config(M.keyFor(selected));
         return `<article class="episode-card">${preview ? '' : `<button class="secondary-button try-minigame" data-try-mini="${entry.id}" aria-label="${escape(mini.title)}のミニゲームを試す">${icon('spark')}ミニゲームを試す</button>`}<button class="episode-option${mode === 'adult' ? ' adult-episode' : ''}" data-episode="${entry.id}"><span class="episode-top"><span class="episode-id">${icon(({lecture: 'book', festival: 'spark', rescue: 'archive', rain: 'rain', presentation: 'presentation'})[entry.id])}<span>STORY 0${i + 1}</span></span><span class="episode-status">限定立ち絵</span></span><span class="episode-portrait"><img src="${D.exclusiveAssets[M.keyFor(selected)]}" alt="この物語限定の御家雄一の立ち絵"></span><strong>${escape(meta.title)}</strong><span class="episode-description">${escape(meta.description)}</span><span class="episode-topics">${S.course(selected).lessons.map(l => escape(l.title)).join(' / ')}</span><span class="episode-mini"><span>MINI GAME</span>${escape(mini.title)}</span><span class="episode-link"><span>${preview ? 'この物語の学びを見る' : 'この物語をはじめる'}</span><span class="card-arrow">${icon('arrow')}</span></span></button></article>`;
       }).join('')}</div><button class="text-button mode-back" id="back-from-episodes">← ${mode === 'adult' ? 'モード選択' : 'コース選択'}に戻る</button>`);
@@ -267,6 +268,8 @@
     target.innerHTML = window.BunriMinigameUI.render(game, result);
     const panel = target.querySelector('.mini-panel');
     panel.scrollTop = previousScroll;
+    const numberInput = target.querySelector('#mini-number');
+    numberInput?.addEventListener('input', () => M.act(game, 'estimate', numberInput.value === '' ? null : numberInput.valueAsNumber));
     target.querySelectorAll('[data-mini-action]').forEach(button => button.addEventListener('click', () => {
       const beforeRound = game.round, beforeStatus = game.status;
       if (!M.act(game, button.dataset.miniAction, Number(button.dataset.miniValue))) return;
@@ -335,7 +338,7 @@
     document.getElementById('back-to-courses')?.addEventListener('click', () => chooseEpisode(selected.id, true));
     document.getElementById('close-modal').focus({ preventScroll: true });
   }
-  function how() { openModal('HOW TO PLAY', 'ふたりで、物語の中へ。', '<ol class="how-list"><li>「物語をはじめる」で未成年向け・成年向けを選びます。未成年向けは同級生との物語で、中学生・高校生の2コース。成年向けは18歳以上の方に向けた、大学生と教員の恋の物語です。クリック、Enter、Spaceで会話が進みます。セリフは名前付きの枠、情景・心の声は背景に直接文章を重ね、順番に表示します。文字の表示中に押すと、今の枠の全文を表示します。</li><li>会話の選択肢で、雄一との距離が変わります。選択肢はクリック、または数字の1・2・3で選べます。</li><li>講義には三つのミニ問題。ヒントを見ても、間違えても大丈夫。必ず解説が出て、物語の最後まで遊べます。</li><li>各モードに三編ずつ、合計六編の物語があります。どの物語からでも遊べて、それぞれの結末は三種類。クイズの点数ではなく、会話の選択で決まります。最後はタイトルに戻して、次の方へ。</li></ol><p class="modal-note">所要時間の目安は1編7〜10分。各編に限定の立ち絵と、手を動かして解くミニゲームがあります。ヒントやお手本を使っても、恋の結末には影響しません。AUTOは文章だけを自動で進め、問題・選択肢・ミニゲームでは止まります。音は最初はオフ。スピーカーボタンで音楽を流せます。結末では、そのエンディング専用の曲に切り替わります。結末の「音楽を再生」から聴くこともできます。</p>'); }
+  function how() { openModal('HOW TO PLAY', 'ふたりで、物語の中へ。', '<ol class="how-list"><li>「物語をはじめる」で未成年向け・成年向けを選びます。未成年向けは同級生との物語で、中学生・高校生の2コース。成年向けは18歳以上の方に向けた、大学生と教員の恋の物語です。クリック、Enter、Spaceで会話が進みます。セリフは名前付きの枠、情景・心の声は背景に直接文章を重ね、順番に表示します。文字の表示中に押すと、今の枠の全文を表示します。</li><li>会話の選択肢で、雄一との距離が変わります。選択肢はクリック、または数字の1・2・3で選べます。</li><li>講義には三つのミニ問題。ヒントを見ても、間違えても大丈夫。必ず解説が出て、物語の最後まで遊べます。</li><li>各モードに三編ずつ、合計六編の物語があります。どの物語からでも遊べて、それぞれの結末は三種類。クイズの点数ではなく、会話の選択で決まります。最後はタイトルに戻して、次の方へ。</li></ol><p class="modal-note">所要時間は1編10〜15分が目安です。読む速さや、パズルを考える時間で変わります。各編に限定の立ち絵と、手を動かして解くミニゲームがあります。ヒントやお手本を使っても、恋の結末には影響しません。AUTOは文章だけを自動で進め、問題・選択肢・ミニゲームでは止まります。音は最初はオフ。スピーカーボタンで音楽を流せます。結末では、そのエンディング専用の曲に切り替わります。結末の「音楽を再生」から聴くこともできます。</p>'); }
   function history() { openModal('STORY LOG', 'ここまでの物語', state.history.map(item => `<div class="history-item history-${item.kind === 'narration' ? 'narration' : 'speech'}">${item.kind === "narration" ? "" : `<strong>${escape(item.speaker)}</strong>`}<p>${escape(item.text)}</p></div>`).join('') || '<p>まだ会話はありません。</p>'); document.getElementById('modal-body').lastElementChild?.scrollIntoView({ block: 'nearest' }); }
   function goHome() {
     if (screen === 'title') return;
@@ -408,6 +411,7 @@
   document.addEventListener('visibilitychange', () => { if (document.hidden) clearTimeout(autoTimer); else scheduleAuto(); syncAudio(); });
   document.addEventListener('keydown', event => {
     if (modal.open || event.repeat || event.altKey || event.ctrlKey || event.metaKey) return;
+    if (event.target.closest('input,textarea,select,[contenteditable="true"]')) return;
     const focusedButton = document.activeElement?.closest('button,a');
     if (screen === 'play' && /^[123]$/.test(event.key) && !state.feedback && ['quiz', 'choice'].includes(S.scene(state).type)) { event.preventDefault(); choose(Number(event.key) - 1); return; }
     if (screen === 'play' && ['Enter', ' '].includes(event.key) && (!focusedButton || focusedButton.id === 'next-line')) { event.preventDefault(); next(); }

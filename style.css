@@ -310,6 +310,43 @@ dialog { border-radius: 18px; border-color: #e1e2d5; box-shadow: 0 24px 90px #15
 .choice-panel .choice-dialogue { margin: 16px 0; padding: 12px 16px; background: #edf2e9; border-left: 2px solid var(--gold); border-radius: 4px; font: 15px/1.9 var(--serif); }
 .choice-dialogue strong { display: block; margin-bottom: 5px; font: 11px/1.5 var(--sans); letter-spacing: 1px; }
 .adult-course .choice-dialogue { background: #f1ebf3; }
+
+/* Ver. 5: planning boards and quiet changes of distance. */
+.mini-board { border:0; padding:0; margin:0; min-width:0; }
+.mini-board:disabled { opacity:.88; }
+.mini-board .mini-instruction { line-height:1.9; }
+.puzzle-evidence { background:#f1f3e8; border-left:3px solid #b09a65; border-radius:4px; padding:14px 16px; font-size:13px; line-height:1.9; margin:16px 0; }
+ul.puzzle-evidence { padding-left:32px; }
+.adult-course .puzzle-evidence { background:#eee8f1; }
+.bit-lamps { margin-bottom:8px; }
+.bit-lamps .bit-switch { border:1px solid #c2cebe; border-radius:8px; padding:12px 4px; text-align:center; }
+.bit-lamps .on { background:#dcebc6; }
+.linked-switch { display:flex; flex-direction:column; gap:6px; min-height:72px; padding:8px 3px!important; }
+.linked-switch small { font-size:10px; line-height:1.7; }
+.cipher-rows { display:grid; gap:10px; }
+.cipher-row { display:grid; grid-template-columns:28px repeat(var(--cipher-count,4),minmax(0,1fr)); gap:5px; align-items:center; }
+.cipher-row .mini-button { padding:10px 3px; min-height:48px; display:flex; flex-direction:column; gap:3px; font-size:15px; }
+.cipher-row small { font-size:10px; }
+.circuit-state { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin:12px 0; }
+.circuit-state span { display:flex; flex-direction:column; border:1px solid #d8cddc; border-radius:5px; padding:8px; gap:4px; font-size:12px; }
+.circuit-state small { font-size:11px; }
+.plan-slots { padding:12px 12px 12px 28px; border:1px dashed #a394ac; border-radius:6px; font-size:12px; line-height:1.9; list-style:none; }
+.puzzle-trace { padding:10px; font-size:11px; background:#eee9f0; border-radius:5px; margin:12px 0; overflow-wrap:anywhere; }
+.puzzle-trace p { margin:7px 0; }
+.record-bank { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
+.record-bank .mini-button { display:flex; padding:10px; flex-direction:column; align-items:flex-start; gap:5px; text-align:left; }
+.record-bank span,.record-bank small { font-size:11px; }
+.record-bank b { font-size:15px; }
+.record-bank .excluded { background:#f3f0f2; color:#7a707e; border-style:dashed; }
+.numeric-answer { display:flex; flex-direction:column; gap:10px; font-size:13px; margin:18px 0; }
+.numeric-answer input { width:150px; max-width:75%; min-height:46px; border:1px solid #9e8ca9; border-radius:5px; padding:8px 12px; background:#fff; color:#2f2838; font:18px var(--sans); }
+.numeric-answer small { font-size:11px; line-height:1.7; }
+[data-beat="hold"] .scene-background { filter:saturate(.8) brightness(.92); }
+[data-beat="apart"] .scene-background { filter:saturate(.65) brightness(.86); }
+[data-beat="heart"] .scene-background { filter:sepia(.2) saturate(.92); }
+[data-beat="heart"] .portrait-position { transition-duration:1.4s; }
+@media(max-width:360px) { .circuit-state { grid-template-columns:1fr; } .record-bank .mini-button { padding:8px; } .cipher-row { gap:3px; grid-template-columns:24px repeat(var(--cipher-count,4),minmax(0,1fr)); } }
+@media(prefers-reduced-motion:reduce) { [data-beat="heart"] .portrait-position { transition:none; } }
 /* Six story-specific, keyboard- and touch-friendly mini games. */
 .mini-panel { width: min(630px, calc(100% - 80px)); max-height: calc(100% - 175px); padding: 24px 28px; overscroll-behavior: contain; }
 .mini-heading { display: flex; justify-content: space-between; gap: 12px; font: 11px var(--sans); color: #597368; }
